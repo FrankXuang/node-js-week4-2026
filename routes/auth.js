@@ -5,6 +5,7 @@ const verifyToken = require('../middlewares/verifyToken');
 const initialUsers = require('../fixtures/users.json');
 
 // ⚠️ 寫作業前先 `npm start` 打開 http://localhost:3000/docs 看 Swagger UI 的完整規格。
+// 💡 /* 作答區 ... */ 是答題提示區，取消註解後填入你的程式碼。
 
 // ───────────────────────────────────────────────────────────
 // state（module 層級、這個 router 獨用）
@@ -19,38 +20,45 @@ const router = express.Router();
 // ───────────────────────────────────────────────────────────
 // TODO 任務二：POST /register
 // ───────────────────────────────────────────────────────────
-// Input:  body = { email, password }
-// Output: 201 / 400（缺欄位）/ 400（email 已存在）
-//
-// 提示：
-// 1. 先驗欄位：email、password 都要有值，否則回傳 400 status
-// 2. 用陣列方法檢查 users 裡是否已有相同 email，有的話回傳 400 status
-// 3. 用 bcrypt：genSalt 產生 salt → hash 加密密碼
-// 4. 把 { id: nextId++, email, password: 加密後的密碼 } 存進 users 陣列
-// 5. 成功回傳 201 status
-// - handler 是 async function
-// - ⚠️ 錯誤回應記得 return
+
+// POST /register
+// - 輸入：body = { email, password }
+// - 輸出：201 + { status: 'success', message: '註冊成功' }，或 400 + { status: 'false', message: '...' }
+// - 提示：
+//   1. email、password 缺少任何一個欄位，或 email 已存在（使用陣列方法檢查）→ return 400 跟對應輸出訊息
+//   2. 密碼加密可使用 bcrypt 的 genSalt 與 hash 
+//   3. 加密完成後，將新使用者（包含 id、email、加密後 password）存進 users，並 return 201 跟對應輸出訊息
+// - 注意：handler 是 async function
+/* 作答區
+router.METHOD('PATH', async (req, res) => { ... });
+*/
 
 // ───────────────────────────────────────────────────────────
 // TODO 任務三：POST /login
 // ───────────────────────────────────────────────────────────
-// Input:  body = { email, password }
-// Output: 200 + { status, token } / 401
-//
-// 提示：
-// 1. 從 users 陣列找出 email 符合的使用者
-// 2. bcrypt.compare 比對明文密碼 vs DB hash
-// 3. 使用者不存在 或 密碼錯誤 → 回一樣的 401（避免帳號探測）
-// 4. 驗過 → jwt.sign({ id, email }, process.env.JWT_SECRET, { expiresIn:'30d' }) 簽 token
-// 5. 成功回傳 { status, token }
-// - handler 是 async function
-// - ⚠️ 錯誤回應記得 return
+
+// POST /login
+// - 輸入：body = { email, password }
+// - 輸出：200 + { status: 'success', token }，或 401 + { status: 'false', message: '帳號或密碼錯誤' }
+// - 提示：
+//   1. 從 users 找出 email 符合的使用者，如果找不到 → return 401 跟對應輸出訊息
+//   2. 用 bcrypt.compare 比對密碼，如果不符合 → return 401 跟對應輸出訊息（兩種失敗回覆同樣訊息，避免帳號探測）
+//   3. 用 jwt.sign 簽出 token，payload 帶入使用者的 id 和 email，secret 使用 process.env.JWT_SECRET，有效期設為 30 天
+//   4. token 簽出後，回應 200 跟對應輸出訊息
+// - 注意：handler 是 async function
+/* 作答區
+router.METHOD('PATH', async (req, res) => { ... });
+*/
 
 // ───────────────────────────────────────────────────────────
 // TODO 任務四：GET /me（受保護）
 // ───────────────────────────────────────────────────────────
-// 提示：
-// 1. 路由第二個參數掛上 verifyToken 守門員
-// 2. handler 從 req.user 取得使用者資料回傳
+
+// GET /me
+// - 保護：路由第二個參數掛上 verifyToken 守門員（驗過後會將使用者資料掛到 req.user）
+// - 輸出：200 + { status: 'success', user: ... }
+/* 作答區
+router.METHOD('PATH', middleware, (req, res) => { ... });
+*/
 
 module.exports = router;

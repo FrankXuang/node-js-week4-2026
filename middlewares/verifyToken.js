@@ -1,21 +1,17 @@
 const jwt = require('jsonwebtoken');
 
 // ⚠️ 寫作業前先 `npm start` 打開 http://localhost:3000/docs 看 Swagger UI 的完整規格。
+// 💡 /* 作答區 ... */ 是答題提示區，取消註解後填入你的程式碼。
 
 // ───────────────────────────────────────────────────────────
 // TODO 任務一：JWT 守門員（verifyToken）
 // ───────────────────────────────────────────────────────────
-// Input:  req.headers.authorization（格式：'Bearer <token>'）
-// Output: 驗過 → req.user + next() / 401 沒帶或格式錯 / 401 驗失敗
-//
-// 提示：
-// 1. 從 req.headers.authorization 讀取 header
-// 2. header 沒帶 或 格式不是 'Bearer <token>' → return 401（訊息：請先登入）
-// 3. 從 header 中取出 token 的部分
-// 4. 用 jwt.verify 搭配環境變數中的 secret 驗 token
-// 5. 驗過 → 將 decoded 資料掛到 req.user，再呼叫 next()
-// - jwt.verify 失敗會 throw，用 try/catch 接，catch 裡回 401（訊息：Token 無效或已過期）
-// - ⚠️ 錯誤回應記得 return
+
+// - 輸入：req.headers.authorization（格式：'Bearer <token>'）
+// - Authorization 格式驗證：沒帶或不符合 'Bearer <token>' 格式 → return 401 + { status: 'false', message: '請先登入' }
+// - Token 驗證：取出 authorization 中 Bearer 後的 token，在 try/catch 中以 jwt.verify 驗證（secret 用 process.env.JWT_SECRET）；
+//   驗證成功則將 decoded 掛到 req.user 並呼叫 next()；
+//   驗證失敗（拋出例外）→ catch 中 return 401 + { status: 'false', message: 'Token 無效或已過期' }
 
 /**
  * JWT 守門員：驗 Authorization header 的 Bearer token
@@ -24,7 +20,7 @@ const jwt = require('jsonwebtoken');
  * @param {import('express').NextFunction} next
  */
 const verifyToken = function (req, res, next) {
-  // TODO: 實作
+  /* 作答區 */
 };
 
 module.exports = verifyToken;
